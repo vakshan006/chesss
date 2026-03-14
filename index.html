@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Royale — Advanced 2D Chess</title>
+    <meta name="description" content="An advanced, visually stunning 2D chess game with 3D-style effects, AI opponent, and cinematic animations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Main Background Image -->
+        <div id="main-bg-container">
+            <img id="main-bg" src="C:\Users\vaksh\.gemini\antigravity\brain\7b799dfe-c5d3-429d-aabb-a99c861239a7\main_menu_bg_1773423254927.png" alt="Main Menu Background">
+        </div>
+        <!-- ===== GAME MENU OVERLAY ===== -->
+        <div id="menu-overlay">
+            <div id="menu">
+                <h1 class="menu-title">♚ Chess Royale</h1>
+                <p class="menu-subtitle">Advanced 2D Chess Experience</p>
+                <div class="menu-buttons">
+                    <button class="menu-btn primary" id="btn-pvp">
+                        <span class="btn-icon">👥</span> Player vs Player
+                    </button>
+                    <button class="menu-btn primary" id="btn-ai">
+                        <span class="btn-icon">🤖</span> Player vs AI
+                    </button>
+                    <button class="menu-btn primary" id="btn-settings-menu">
+                        <span class="btn-icon">⚙️</span> Settings
+                    </button>
+                    <button class="menu-btn primary" id="btn-task">
+                        <span class="btn-icon">🧩</span> Tactical Puzzles
+                    </button>
+                    <button class="menu-btn primary" id="btn-online">
+                        <span class="btn-icon">🌐</span> Online Multi
+                    </button>
+                    <button class="menu-btn primary" id="btn-ai-prog">
+                        <span class="btn-icon">📈</span> AI Progression (10 Lvl)
+                    </button>
+                </div>
+                <div id="ai-settings" class="hidden">
+                    <h3>Select Difficulty</h3>
+                    <div class="difficulty-buttons">
+                        <button class="diff-btn" data-depth="1">Easy</button>
+                        <button class="diff-btn active" data-depth="3">Medium</button>
+                        <button class="diff-btn" data-depth="4">Hard</button>
+                    </div>
+                    <div class="color-choice">
+                        <h3>Play as</h3>
+                        <div class="color-buttons">
+                            <button class="color-btn active" data-color="white">♔ White</button>
+                            <button class="color-btn" data-color="black">♚ Black</button>
+                        </div>
+                    </div>
+                    <button class="menu-btn accent" id="btn-start-ai">Start Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== GAME SCREEN ===== -->
+        <div id="game-screen" class="hidden">
+            <header id="header">
+                <div class="header-left">
+                    <h1 class="game-logo">♚ Chess Royale</h1>
+                    <span id="mode-badge" class="badge">PvP</span>
+                </div>
+                <div class="header-right">
+                    <button id="hint-btn" class="icon-btn" title="Hint">💡 <span>Hint</span></button>
+                    <button id="settings-btn" class="icon-btn" title="Settings">⚙️ <span>Settings</span></button>
+                    <button id="undo-btn" class="icon-btn" title="Undo">↶ <span>Undo</span></button>
+                    <button id="reset-btn" class="icon-btn" title="Restart">⟳ <span>Reset</span></button>
+                    <button id="quit-btn" class="icon-btn accent" title="Back to Menu">🏠 <span>Back to Menu</span></button>
+                </div>
+            </header>
+
+            <main id="main">
+                <aside id="panel-black" class="side-panel">
+                    <div class="player-card black-card">
+                        <div class="player-avatar">♚</div>
+                        <div class="player-info">
+                            <span class="player-name">Black</span>
+                            <span class="player-label" id="black-label">Player 2</span>
+                        </div>
+                        <div class="turn-dot" id="black-dot"></div>
+                    </div>
+                    <div class="captured-pieces" id="captured-by-black"></div>
+                </aside>
+
+                <section id="board-section">
+                    <div id="status-bar">
+                        <span id="turn-indicator">White's Turn</span>
+                        <span id="game-status"></span>
+                    </div>
+                    <div id="board-wrapper">
+                        <div id="board-perspective">
+                            <div id="board"></div>
+                            <div id="board-reflection"></div>
+                        </div>
+                        <canvas id="particle-canvas"></canvas>
+                    </div>
+                    <div id="coord-files" class="coord-labels"></div>
+                </section>
+
+                <aside id="panel-white" class="side-panel">
+                    <div class="player-card white-card">
+                        <div class="player-avatar">♔</div>
+                        <div class="player-info">
+                            <span class="player-name">White</span>
+                            <span class="player-label" id="white-label">Player 1</span>
+                        </div>
+                        <div class="turn-dot active" id="white-dot"></div>
+                    </div>
+                    <div class="captured-pieces" id="captured-by-white"></div>
+                </aside>
+            </main>
+        </div>
+
+        <!-- ===== PROMOTION MODAL ===== -->
+        <div id="promotion-overlay" class="hidden">
+            <div id="promotion-modal">
+                <h3>Promote Pawn</h3>
+                <div id="promotion-choices"></div>
+            </div>
+        </div>
+        <!-- ===== ONLINE LOBBY MODAL ===== -->
+        <div id="online-overlay" class="hidden">
+            <div id="online-modal">
+                <button id="close-online-btn" class="icon-btn" style="position:absolute; top:12px; right:12px; width:30px; height:30px;">✖</button>
+                <h3>🌐 Online Multiplayer</h3>
+                <div class="online-box">
+                    <p class="online-label">Your Room Code:</p>
+                    <code id="my-peer-id">Generating...</code>
+                    <button class="menu-btn primary" id="btn-copy-id">Copy</button>
+                </div>
+                <div class="online-box">
+                    <p class="online-label">Join a Friend:</p>
+                    <input type="text" id="friend-id-input" placeholder="Paste code here...">
+                    <button class="menu-btn accent" id="btn-join-friend">Join Game</button>
+                </div>
+                <p id="online-status"></p>
+                <button class="menu-btn primary" id="back-from-online" style="width:100%; margin-top:20px;">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- ===== SETTINGS MODAL ===== -->
+        <div id="settings-overlay" class="hidden">
+            <div id="settings-modal">
+                <button id="close-settings-btn" class="icon-btn close-btn">✖</button>
+                <h3>⚙️ Game Settings</h3>
+                <div class="settings-group">
+                    <h4>Audio</h4>
+                    <label class="switch-item">
+                        <span>Enable Sounds</span>
+                        <input type="checkbox" id="setting-sound" checked>
+                    </label>
+                </div>
+                <div class="settings-group">
+                    <h4>Visuals</h4>
+                    <label class="switch-item">
+                        <span>Show Legal Moves</span>
+                        <input type="checkbox" id="setting-highlights" checked>
+                    </label>
+                    <label class="switch-item">
+                        <span>Enable Particles</span>
+                        <input type="checkbox" id="setting-particles" checked>
+                    </label>
+                </div>
+                <div class="settings-group">
+                    <h4>Game Control (Permissions)</h4>
+                    <button class="menu-btn primary" id="btn-unlock-all" style="width:100%; margin-bottom:10px;">🔓 Unlock All Levels</button>
+                    <button class="menu-btn accent" id="btn-reset-data" style="width:100%;">🧹 Reset All Progress</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="puzzles.js"></script>
+    <script src="chess.js"></script>
+</body>
+</html>
